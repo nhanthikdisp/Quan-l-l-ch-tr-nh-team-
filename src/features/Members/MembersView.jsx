@@ -11,7 +11,6 @@ export default function MembersView() {
 
   const [memberName, setMemberName] = useState('');
   const [appRole, setAppRole] = useState('Member');
-  const [skillRole, setSkillRole] = useState('Xem map & Chụp hình');
   const [error, setError] = useState('');
 
   const openAddModal = () => {
@@ -19,7 +18,6 @@ export default function MembersView() {
     setEditingMember(null);
     setMemberName('');
     setAppRole('Member');
-    setSkillRole('Xem map & Chụp hình');
     setShowAddModal(true);
   };
 
@@ -28,7 +26,6 @@ export default function MembersView() {
     setEditingMember(m);
     setMemberName(m.name);
     setAppRole(m.role || 'Member');
-    setSkillRole(m.skillRole || 'Thành viên');
     setShowAddModal(true);
   };
 
@@ -39,10 +36,12 @@ export default function MembersView() {
     try {
       if (!memberName.trim()) throw new Error('Vui lòng nhập tên thành viên!');
 
+      const skillRoleText = appRole === 'Lead' ? 'Leader (Trưởng đoàn)' : 'Member (Thành viên)';
+
       if (editingMember) {
-        updateMemberRole(editingMember.id, appRole, skillRole);
+        updateMemberRole(editingMember.id, appRole, skillRoleText);
       } else {
-        addMember({ name: memberName, role: appRole, skillRole });
+        addMember({ name: memberName, role: appRole, skillRole: skillRoleText });
       }
 
       setShowAddModal(false);
@@ -56,8 +55,8 @@ export default function MembersView() {
 
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
         <div>
-          <h3 className="text-lg font-extrabold text-cow-spot">Danh Sách Thành Viên & Vai Trò</h3>
-          <p className="text-xs text-on-surface-variant font-medium">Quản lý nhiệm vụ (Dẫn đoàn, xem map, nấu ăn, chụp hình...) và phân quyền</p>
+          <h3 className="text-lg font-extrabold text-cow-spot">Danh Sách Thành Viên Chuyến Đi</h3>
+          <p className="text-xs text-on-surface-variant font-medium">Phân quyền chức vụ trong chuyến đi chỉ gồm Leader (Trưởng đoàn) và Member (Thành viên)</p>
         </div>
 
         {isLead && (
@@ -74,7 +73,7 @@ export default function MembersView() {
       {!isLead && (
         <div className="bg-surface-container-low rounded-2xl p-4 border border-surface-variant flex items-center gap-3 text-xs text-on-surface-variant">
           <span className="material-symbols-outlined text-tertiary">info</span>
-          <span>Bạn đang ở quyền <strong>Member</strong>. Chỉ có <strong>Lead</strong> mới có quyền thêm, xóa hoặc sửa vai trò thành viên.</span>
+          <span>Bạn đang ở quyền <strong>Member</strong>. Chỉ có <strong>Leader</strong> mới có quyền thêm, xóa hoặc sửa vai trò thành viên.</span>
         </div>
       )}
 
@@ -97,13 +96,13 @@ export default function MembersView() {
                     <span className={`px-2.5 py-0.5 text-[10px] font-extrabold uppercase rounded-full ${
                       isMemberLead ? 'bg-cow-spot text-white' : 'bg-soft-pink text-cow-spot'
                     }`}>
-                      {m.role || 'Member'}
+                      {isMemberLead ? 'Leader' : 'Member'}
                     </span>
                   </div>
                   <h4 className="font-extrabold text-base text-cow-spot">{m.name}</h4>
                   <p className="text-xs font-bold text-tertiary flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">assignment_ind</span>
-                    {m.skillRole || 'Thành viên'}
+                    <span className="material-symbols-outlined text-sm">badge</span>
+                    {isMemberLead ? 'Trưởng đoàn (Leader)' : 'Thành viên (Member)'}
                   </p>
                 </div>
               </div>
@@ -174,28 +173,15 @@ export default function MembersView() {
 
               <div>
                 <label className="block text-xs font-bold text-cow-spot uppercase tracking-wider mb-1">
-                  Mô Tả Nhiệm Vụ (Skill Role)
-                </label>
-                <input
-                  type="text"
-                  placeholder="VD: Dẫn đoàn, Xem map, Nấu ăn, Chụp hình..."
-                  value={skillRole}
-                  onChange={e => setSkillRole(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-full border border-outline-variant bg-surface-container-low text-xs font-semibold"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-cow-spot uppercase tracking-wider mb-1">
-                  Vai Trò Hệ Thống (App Role)
+                  Vai Trò Trong Chuyến Đi
                 </label>
                 <select
                   value={appRole}
                   onChange={e => setAppRole(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-full border border-outline-variant bg-surface-container-low text-xs font-semibold cursor-pointer"
                 >
-                  <option value="Member">Member (Thành viên thường)</option>
-                  <option value="Lead">Lead (Trưởng đoàn - Toàn quyền)</option>
+                  <option value="Member">Member (Thành viên chuyến đi)</option>
+                  <option value="Lead">Leader (Trưởng đoàn - Toàn quyền)</option>
                 </select>
               </div>
 

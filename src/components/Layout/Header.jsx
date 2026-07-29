@@ -3,9 +3,11 @@ import { useAuth } from '../../store/AuthContext';
 import { useTrip } from '../../store/TripContext';
 
 export default function Header({ activeTab, setActiveTab }) {
-  const { currentUser, switchAccount, userList } = useAuth();
+  const { currentUser, switchAccount, userList, logout } = useAuth();
   const { currentOngoingEvent } = useTrip();
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  const isDebugMode = import.meta.env.VITE_ENABLE_DEBUG_MODE === 'true';
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -80,20 +82,44 @@ export default function Header({ activeTab, setActiveTab }) {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 bg-surface-container-high px-3 py-1 rounded-full border border-surface-variant">
-            <span className="text-[11px] font-bold text-on-surface-variant uppercase">Tài khoản:</span>
-            <select
-              value={currentUser?.uid || ''}
-              onChange={(e) => switchAccount(e.target.value)}
-              className="bg-white text-cow-spot font-bold text-xs rounded-full px-2 py-1 border border-outline-variant focus:outline-none focus:ring-2 focus:ring-tertiary cursor-pointer"
-            >
-              {userList.map(u => (
-                <option key={u.uid} value={u.uid}>
-                  {u.name} ({u.role})
-                </option>
-              ))}
-            </select>
-          </div>
+          {isDebugMode ? (
+            <div className="flex items-center gap-2 bg-surface-container-high px-3 py-1 rounded-full border border-surface-variant">
+              <span className="text-[11px] font-bold text-on-surface-variant uppercase">Tài khoản (Debug):</span>
+              <select
+                value={currentUser?.uid || ''}
+                onChange={(e) => switchAccount(e.target.value)}
+                className="bg-white text-cow-spot font-bold text-xs rounded-full px-2 py-1 border border-outline-variant focus:outline-none focus:ring-2 focus:ring-tertiary cursor-pointer"
+              >
+                {userList.map(u => (
+                  <option key={u.uid} value={u.uid}>
+                    {u.name} ({u.role})
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 bg-surface-container-high px-3 py-1.5 rounded-full border border-surface-variant">
+              <div className="flex items-center gap-2">
+                <img
+                  src={currentUser?.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(currentUser?.name || 'User')}`}
+                  alt={currentUser?.name}
+                  className="w-6 h-6 rounded-full bg-soft-pink border border-cow-spot"
+                />
+                <span className="text-xs font-extrabold text-cow-spot">{currentUser?.name}</span>
+                <span className="px-2 py-0.5 bg-cow-spot text-white text-[10px] font-bold rounded-full uppercase">
+                  {currentUser?.role === 'Lead' ? 'Leader' : 'Member'}
+                </span>
+              </div>
+              <button
+                onClick={logout}
+                title="Đăng xuất khỏi tài khoản"
+                className="px-2.5 py-1 bg-rose-100 hover:bg-rose-200 text-rose-900 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+              >
+                <span className="material-symbols-outlined text-xs">logout</span>
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          )}
         </div>
 
       </div>

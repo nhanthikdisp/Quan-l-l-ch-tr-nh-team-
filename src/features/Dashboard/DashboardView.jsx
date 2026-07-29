@@ -208,14 +208,10 @@ export default function DashboardView({ setActiveTab }) {
 
             <div className="p-4 bg-surface-container rounded-2xl border border-surface-variant space-y-2 text-xs">
               <div className="flex justify-between font-bold">
-                <span>Vai trò hiện tại:</span>
+                <span>Chức vụ trong chuyến đi:</span>
                 <span className="px-2 py-0.5 bg-cow-spot text-white rounded-full uppercase text-[10px]">
-                  {currentUser?.role || 'Member'}
+                  {currentUser?.role === 'Lead' ? 'Leader (Trưởng đoàn)' : 'Member (Thành viên)'}
                 </span>
-              </div>
-              <div className="flex justify-between font-semibold text-on-surface-variant">
-                <span>Nhiệm vụ:</span>
-                <span>{currentUser?.skillRole}</span>
               </div>
             </div>
           </div>

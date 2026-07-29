@@ -23,7 +23,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
           <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>pets</span>
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-cow-spot tracking-tight">ChronosPlan</h1>
+          <h1 className="text-2xl font-bold text-cow-spot tracking-tight">Quản Lí Lịch Trình</h1>
           <p className="text-xs text-on-surface-variant font-medium">Lịch trình thông minh</p>
         </div>
       </div>
@@ -175,7 +175,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
       <div className="pt-4 border-t border-surface-variant space-y-1">
         <a
           href="#help"
-          onClick={(e) => { e.preventDefault(); alert('ChronosPlan: Kéo thả ô lịch trình & thanh trượt 24H để sắp xếp lịch trình linh hoạt!'); }}
+          onClick={(e) => { e.preventDefault(); alert('Quản Lí Lịch Trình: Kéo thả ô lịch trình & thanh trượt 24H để sắp xếp lịch trình linh hoạt!'); }}
           className="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-highest rounded-full px-4 py-2 text-xs font-bold"
         >
           <span className="material-symbols-outlined text-base">help</span>

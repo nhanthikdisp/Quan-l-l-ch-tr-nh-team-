@@ -10,116 +10,115 @@ export const useTrip = () => useContext(TripContext);
 const getTodayStr = () => new Date().toISOString().split('T')[0];
 
 const DEFAULT_MEMBERS = [
-  { id: 'user_lead_1', name: 'Nguyễn Văn Lead', role: 'Lead', skillRole: 'Dẫn đoàn', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Lead' },
-  { id: 'user_member_1', name: 'Trần Thị Thu', role: 'Member', skillRole: 'Xem map & Chụp hình', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Thu' },
-  { id: 'user_member_2', name: 'Lê Hoàng Nam', role: 'Member', skillRole: 'Nấu ăn & Thủ quỹ', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nam' },
+  { id: 'user_lead_1', email: 'lead@chronos.vn', name: 'Nguyễn Văn Lead', role: 'Lead', skillRole: 'Dẫn đoàn', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Lead' },
+  { id: 'user_member_1', email: 'thanhvien1@chronos.vn', name: 'Trần Thị Thu', role: 'Member', skillRole: 'Xem map & Chụp hình', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Thu' },
+  { id: 'user_member_2', email: 'thanhvien2@chronos.vn', name: 'Lê Hoàng Nam', role: 'Member', skillRole: 'Nấu ăn & Thủ quỹ', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nam' },
 ];
 
 export const TripProvider = ({ children }) => {
   const { currentUser, isLead } = useAuth();
   const todayStr = getTodayStr();
 
-  const [members, setMembers] = useState(() => {
-    const saved = localStorage.getItem('chronos_trip_members');
-    return saved ? JSON.parse(saved) : DEFAULT_MEMBERS;
-  });
+  // Tắt hoàn toàn việc lưu/đọc từ localStorage để ưu tiên chạy 100% Firebase Backend
+  useEffect(() => {
+    try {
+      localStorage.removeItem('chronos_trip_members');
+      localStorage.removeItem('chronos_trip_events');
+    } catch (e) {}
+  }, []);
 
-  const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('chronos_trip_events');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+  const [members, setMembers] = useState(DEFAULT_MEMBERS);
+
+  const [events, setEvents] = useState(() => [
+    {
+      id: 'evt_1',
+      title: 'Team Sync: Chiến lược Q4',
+      description: 'Tập trung thảo luận định hướng quý 4.',
+      date: todayStr,
+      startTime: '08:30',
+      endTime: '11:00',
+      startHour: 8.5,
+      durationHours: 2.5,
+      location: 'Phòng họp A',
+      activityType: 'Công việc',
+      status: 'Đã xong',
+      completed: true,
+      assignedMembers: ['user_lead_1', 'user_member_1', 'user_member_2'],
+      participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn', 'thanhvien2@chronos.vn'],
+      cost: 600000,
+      payerId: 'user_lead_1',
+      payerEmail: 'lead@chronos.vn',
+      createdBy: 'user_lead_1',
+      createdByName: 'Nguyễn Văn Lead',
+      row: 1
+    },
+    {
+      id: 'evt_2',
+      title: 'Review thiết kế giao diện',
+      description: 'Đánh giá các bản thiết kế UI/UX.',
+      date: todayStr,
+      startTime: '10:00',
+      endTime: '14:00',
+      startHour: 10,
+      durationHours: 4,
+      location: 'Creative Lab',
+      activityType: 'Công việc',
+      status: 'Đang diễn ra',
+      completed: false,
+      assignedMembers: ['user_lead_1', 'user_member_1'],
+      participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn'],
+      cost: 450000,
+      payerId: 'user_member_2',
+      payerEmail: 'thanhvien2@chronos.vn',
+      createdBy: 'user_lead_1',
+      createdByName: 'Nguyễn Văn Lead',
+      row: 2
+    },
+    {
+      id: 'evt_3',
+      title: 'Bữa trưa giao lưu thân mật',
+      description: 'Thưởng thức ăn trưa cùng toàn đội.',
+      date: todayStr,
+      startTime: '12:00',
+      endTime: '13:30',
+      startHour: 12,
+      durationHours: 1.5,
+      location: 'Nhà hàng Pizza 4P\'s',
+      activityType: 'Ăn uống',
+      status: 'Sắp tới',
+      completed: false,
+      assignedMembers: ['user_lead_1', 'user_member_1', 'user_member_2'],
+      participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn', 'thanhvien2@chronos.vn'],
+      cost: 350000,
+      payerId: 'user_member_1',
+      payerEmail: 'thanhvien1@chronos.vn',
+      createdBy: 'user_member_1',
+      createdByName: 'Trần Thị Thu',
+      row: 3
+    },
+    {
+      id: 'evt_4',
+      title: 'Dã ngoại ngắm cảnh hoàng hôn',
+      description: 'Hoạt động ngắm cảnh teambuilding.',
+      date: todayStr,
+      startTime: '15:30',
+      endTime: '17:30',
+      startHour: 15.5,
+      durationHours: 2,
+      location: 'Công viên Hồ Tây',
+      activityType: 'Ngắm cảnh',
+      status: 'Sắp tới',
+      completed: false,
+      assignedMembers: ['user_lead_1', 'user_member_1'],
+      participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn'],
+      cost: 200000,
+      payerId: 'user_lead_1',
+      payerEmail: 'lead@chronos.vn',
+      createdBy: 'user_lead_1',
+      createdByName: 'Nguyễn Văn Lead',
+      row: 4
     }
-    return [
-      {
-        id: 'evt_1',
-        title: 'Team Sync: Chiến lược Q4',
-        description: 'Tập trung thảo luận định hướng quý 4.',
-        date: todayStr,
-        startTime: '08:30',
-        endTime: '11:00',
-        startHour: 8.5,
-        durationHours: 2.5,
-        location: 'Phòng họp A',
-        activityType: 'Công việc',
-        status: 'Đã xong',
-        completed: true,
-        assignedMembers: ['user_lead_1', 'user_member_1', 'user_member_2'],
-        cost: 600000,
-        payerId: 'user_lead_1',
-        createdBy: 'user_lead_1',
-        createdByName: 'Nguyễn Văn Lead',
-        row: 1
-      },
-      {
-        id: 'evt_2',
-        title: 'Review thiết kế giao diện',
-        description: 'Đánh giá các bản thiết kế UI/UX.',
-        date: todayStr,
-        startTime: '10:00',
-        endTime: '14:00',
-        startHour: 10,
-        durationHours: 4,
-        location: 'Creative Lab',
-        activityType: 'Công việc',
-        status: 'Đang diễn ra',
-        completed: false,
-        assignedMembers: ['user_lead_1', 'user_member_1'],
-        cost: 450000,
-        payerId: 'user_member_2',
-        createdBy: 'user_lead_1',
-        createdByName: 'Nguyễn Văn Lead',
-        row: 2
-      },
-      {
-        id: 'evt_3',
-        title: 'Bữa trưa giao lưu thân mật',
-        description: 'Thưởng thức ăn trưa cùng toàn đội.',
-        date: todayStr,
-        startTime: '12:00',
-        endTime: '13:30',
-        startHour: 12,
-        durationHours: 1.5,
-        location: 'Nhà hàng Pizza 4P\'s',
-        activityType: 'Ăn uống',
-        status: 'Sắp tới',
-        completed: false,
-        assignedMembers: ['user_lead_1', 'user_member_1', 'user_member_2'],
-        cost: 350000,
-        payerId: 'user_member_1',
-        createdBy: 'user_member_1',
-        createdByName: 'Trần Thị Thu',
-        row: 3
-      },
-      {
-        id: 'evt_4',
-        title: 'Dã ngoại ngắm cảnh hoàng hôn',
-        description: 'Hoạt động ngắm cảnh teambuilding.',
-        date: todayStr,
-        startTime: '15:30',
-        endTime: '17:30',
-        startHour: 15.5,
-        durationHours: 2,
-        location: 'Công viên Hồ Tây',
-        activityType: 'Ngắm cảnh',
-        status: 'Sắp tới',
-        completed: false,
-        assignedMembers: ['user_lead_1', 'user_member_1'],
-        cost: 200000,
-        payerId: 'user_lead_1',
-        createdBy: 'user_lead_1',
-        createdByName: 'Nguyễn Văn Lead',
-        row: 4
-      }
-    ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('chronos_trip_members', JSON.stringify(members));
-  }, [members]);
-
-  useEffect(() => {
-    localStorage.setItem('chronos_trip_events', JSON.stringify(events));
-  }, [events]);
+  ]);
 
   // Firestore sync listener
   useEffect(() => {
@@ -212,6 +211,7 @@ export const TripProvider = ({ children }) => {
       createdByName: currentUser?.name || 'Thành viên',
       cost: Number(eventData.cost) || 0,
       assignedMembers: eventData.assignedMembers || [currentUser?.uid],
+      participantEmails: eventData.participantEmails || [currentUser?.email].filter(Boolean),
       row: Number(eventData.row) || 1
     };
 
@@ -289,6 +289,7 @@ export const TripProvider = ({ children }) => {
     if (!isLead) throw new Error('Chỉ Lead mới có quyền thêm thành viên!');
     const newMember = {
       id: 'user_' + Date.now(),
+      email: memberData.email || '',
       name: memberData.name,
       role: memberData.role || 'Member',
       skillRole: memberData.skillRole || 'Thành viên',
@@ -296,6 +297,131 @@ export const TripProvider = ({ children }) => {
     };
     setMembers(prev => [...prev, newMember]);
     return newMember;
+  };
+
+  const addParticipantByEmail = async (eventId, inputEmail) => {
+    if (!isLead) throw new Error('Chỉ Leader mới được phép nhập email thêm thành viên vào sự kiện!');
+    const emailStr = (inputEmail || '').trim().toLowerCase();
+    if (!emailStr || !emailStr.includes('@')) {
+      throw new Error('Vui lòng nhập định dạng Email hợp lệ!');
+    }
+
+    const existingEvt = events.find(e => e.id === eventId);
+    if (!existingEvt) throw new Error('Không tìm thấy sự kiện!');
+
+    const currentEmails = existingEvt.participantEmails || [];
+    if (currentEmails.map(e => e.toLowerCase()).includes(emailStr)) {
+      throw new Error(`Email ${emailStr} đã có trong danh sách tham gia sự kiện này!`);
+    }
+
+    // Check if email matches existing member
+    const foundMember = members.find(m => m.email && m.email.toLowerCase() === emailStr);
+    const updatedAssigned = [...(existingEvt.assignedMembers || [])];
+    if (foundMember && !updatedAssigned.includes(foundMember.id)) {
+      updatedAssigned.push(foundMember.id);
+    }
+
+    const updatedEmails = [...currentEmails, emailStr];
+    const updatedEvt = {
+      ...existingEvt,
+      participantEmails: updatedEmails,
+      assignedMembers: updatedAssigned
+    };
+
+    setEvents(prev => prev.map(e => e.id === eventId ? updatedEvt : e));
+
+    if (isFirebaseOnline && db) {
+      try {
+        await setDoc(doc(db, 'events', eventId), updatedEvt, { merge: true });
+      } catch (e) { console.warn('Firestore update error:', e); }
+    }
+  };
+
+  const removeParticipantFromEvent = async (eventId, emailOrId) => {
+    if (!isLead) throw new Error('Chỉ Leader mới được phép xóa thành viên khỏi sự kiện!');
+    const existingEvt = events.find(e => e.id === eventId);
+    if (!existingEvt) return;
+
+    const targetStr = (emailOrId || '').trim().toLowerCase();
+    const updatedEmails = (existingEvt.participantEmails || []).filter(e => e.toLowerCase() !== targetStr);
+    const updatedAssigned = (existingEvt.assignedMembers || []).filter(id => id !== emailOrId);
+
+    const updatedEvt = {
+      ...existingEvt,
+      participantEmails: updatedEmails,
+      assignedMembers: updatedAssigned
+    };
+
+    setEvents(prev => prev.map(e => e.id === eventId ? updatedEvt : e));
+
+    if (isFirebaseOnline && db) {
+      try {
+        await setDoc(doc(db, 'events', eventId), updatedEvt, { merge: true });
+      } catch (e) { }
+    }
+  };
+
+  const addEventPayment = async (eventId, { title, amount, payerEmail }) => {
+    if (!isLead) throw new Error('Chỉ Leader mới được phân bổ khoản chi cho sự kiện!');
+    const existingEvt = events.find(e => e.id === eventId);
+    if (!existingEvt) throw new Error('Không tìm thấy sự kiện!');
+
+    const amt = Number(amount) || 0;
+    if (amt <= 0) throw new Error('Số tiền khoản chi phải lớn hơn 0!');
+
+    const pEmail = (payerEmail || '').trim().toLowerCase();
+    const foundMember = members.find(m => m.email && m.email.toLowerCase() === pEmail);
+
+    const newPayment = {
+      id: 'pay_' + Date.now(),
+      title: title || 'Khoản chi tiêu',
+      amount: amt,
+      payerEmail: pEmail,
+      payerName: foundMember ? foundMember.name : pEmail.split('@')[0],
+      payerId: foundMember ? foundMember.id : ''
+    };
+
+    const currentPayments = Array.isArray(existingEvt.payments) ? existingEvt.payments : [];
+    const updatedPayments = [...currentPayments, newPayment];
+    const newTotalCost = updatedPayments.reduce((s, p) => s + (Number(p.amount) || 0), 0);
+
+    const updatedEvt = {
+      ...existingEvt,
+      payments: updatedPayments,
+      cost: newTotalCost
+    };
+
+    setEvents(prev => prev.map(e => e.id === eventId ? updatedEvt : e));
+
+    if (isFirebaseOnline && db) {
+      try {
+        await setDoc(doc(db, 'events', eventId), updatedEvt, { merge: true });
+      } catch (e) { }
+    }
+  };
+
+  const removeEventPayment = async (eventId, paymentId) => {
+    if (!isLead) throw new Error('Chỉ Leader mới được xóa khoản chi khỏi sự kiện!');
+    const existingEvt = events.find(e => e.id === eventId);
+    if (!existingEvt) return;
+
+    const currentPayments = Array.isArray(existingEvt.payments) ? existingEvt.payments : [];
+    const updatedPayments = currentPayments.filter(p => p.id !== paymentId);
+    const newTotalCost = updatedPayments.reduce((s, p) => s + (Number(p.amount) || 0), 0);
+
+    const updatedEvt = {
+      ...existingEvt,
+      payments: updatedPayments,
+      cost: newTotalCost
+    };
+
+    setEvents(prev => prev.map(e => e.id === eventId ? updatedEvt : e));
+
+    if (isFirebaseOnline && db) {
+      try {
+        await setDoc(doc(db, 'events', eventId), updatedEvt, { merge: true });
+      } catch (e) { }
+    }
   };
 
   const updateMemberRole = (memberId, newRole, newSkillRole) => {
@@ -323,6 +449,10 @@ export const TripProvider = ({ children }) => {
       rejectEvent,
       toggleEventComplete,
       addMember,
+      addParticipantByEmail,
+      removeParticipantFromEvent,
+      addEventPayment,
+      removeEventPayment,
       updateMemberRole,
       deleteMember,
       calculateExpenses,
@@ -332,3 +462,4 @@ export const TripProvider = ({ children }) => {
     </TripContext.Provider>
   );
 };
+
