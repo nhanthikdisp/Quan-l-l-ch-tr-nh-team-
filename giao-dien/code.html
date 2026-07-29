@@ -1,0 +1,437 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ChronosPlan - Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#c6c6c7",
+                        "on-secondary-container": "#67625e",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c4c7c8",
+                        "surface-container-high": "#f3e6dd",
+                        "background": "#fff8f5",
+                        "primary": "#5d5f5f",
+                        "surface-tint": "#5d5f5f",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#fceee6",
+                        "surface-container": "#f9ebe3",
+                        "inverse-surface": "#362f29",
+                        "surface-container-highest": "#ede0d8",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#4b4642",
+                        "outline": "#747878",
+                        "secondary-fixed-dim": "#cdc5c0",
+                        "surface-bright": "#fff8f5",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#ede0d8",
+                        "on-primary-container": "#6f7070",
+                        "on-secondary-fixed": "#1e1b18",
+                        "secondary": "#635d5a",
+                        "surface": "#fff8f5",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "tertiary": "#81515a",
+                        "on-surface-variant": "#444748",
+                        "primary-container": "#f5f5f5",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#211a15",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#454747",
+                        "surface-dim": "#e4d8cf",
+                        "on-tertiary-container": "#95626b",
+                        "on-tertiary-fixed-variant": "#663a43",
+                        "tertiary-fixed": "#ffd9df",
+                        "on-primary-fixed": "#1a1c1c",
+                        "secondary-fixed": "#e9e1dc",
+                        "on-surface": "#211a15",
+                        "tertiary-fixed-dim": "#f4b6c1",
+                        "surface-container-low": "#fff1e8",
+                        "primary-fixed": "#e2e2e2",
+                        "on-tertiary-fixed": "#330f19",
+                        "tertiary-container": "#fff2f3",
+                        "secondary-container": "#e6ded9",
+                        "cow-spot": "#2A2420",
+                        "soft-pink": "#FFC0CB",
+                        "pastel-green": "#e6f4ea",
+                        "pastel-yellow": "#fef7e0",
+                        "pastel-purple": "#f3e8fd",
+                        "pastel-blue": "#e8f0fe",
+                        "pastel-red": "#fce8e6",
+                        "moo-green": "#34A853"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+                    },
+                    "boxShadow": {
+                        'tactile': '0px 10px 30px rgba(74, 66, 60, 0.05)',
+                        'pressable': '0px 4px 0px rgba(74, 66, 60, 0.2)',
+                        'pressable-hover': '0px 2px 0px rgba(74, 66, 60, 0.2)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .cow-pattern {
+            background-color: #fff1e8;
+            background-image: radial-gradient(#2A2420 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .grid-bg {
+            background-image: 
+                linear-gradient(to right, #ede0d8 1px, transparent 1px),
+                linear-gradient(to bottom, #ede0d8 1px, transparent 1px);
+            background-size: calc(100% / 12) 60px;
+        }
+        
+        .time-row-bg {
+            background-image: linear-gradient(to bottom, #ede0d8 1px, transparent 1px);
+            background-size: 100% 60px;
+        }
+
+        @keyframes cow-walk {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-4px) rotate(-2deg);
+            }
+            75% {
+                transform: translateY(-4px) rotate(2deg);
+            }
+        }
+
+        .animate-cow-walk {
+            animation: cow-walk 0.8s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-72 flex flex-col p-gutter z-40 bg-surface-container-low shadow-sm rounded-r-lg border-r border-surface-variant overflow-y-auto hidden md:flex">
+<!-- Header -->
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-full bg-soft-pink flex items-center justify-center text-cow-spot font-bold shadow-tactile border-2 border-cow-spot">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pets</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-cow-spot">ChronosPlan</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Lịch trình thông minh</p>
+</div>
+</div>
+<!-- Main Nav -->
+<nav class="flex-1 space-y-2">
+<!-- Active Tab -->
+<a class="flex justify-between items-center bg-tertiary text-on-tertiary rounded-full px-4 py-3 shadow-tactile font-label-lg text-label-lg hover:bg-tertiary/90 transition-all" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="">Tasks</span>
+</div>
+<span class="bg-soft-pink text-cow-spot px-2 py-0.5 rounded-full text-[10px] font-bold">4 hôm nay</span>
+</a>
+<div class="pt-6 pb-2">
+<h2 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">THỐNG KÊ TRẠNG THÁI (8)</h2>
+</div>
+<!-- Status Items -->
+<div class="space-y-3">
+<div class="flex justify-between items-center bg-pastel-green rounded-full px-4 py-2 border border-green-200 cursor-pointer hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-green-800">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="font-label-lg text-label-lg">Đã hoàn thành</span>
+</div>
+<span class="bg-green-200 text-green-900 px-2 py-0.5 rounded-full text-xs font-bold">3</span>
+</div>
+<div class="flex justify-between items-center bg-pastel-yellow rounded-full px-4 py-2 border border-yellow-200 cursor-pointer hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-yellow-800">
+<span class="material-symbols-outlined text-[18px]">pending_actions</span>
+<span class="font-label-lg text-label-lg">Chưa hoàn thành</span>
+</div>
+<span class="bg-yellow-200 text-yellow-900 px-2 py-0.5 rounded-full text-xs font-bold">5</span>
+</div>
+<div class="flex justify-between items-center bg-pastel-purple rounded-full px-4 py-2 border border-purple-200 cursor-pointer hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-purple-800">
+<span class="material-symbols-outlined text-[18px]">play_circle</span>
+<span class="font-label-lg text-label-lg">Đang diễn ra</span>
+</div>
+<span class="bg-purple-200 text-purple-900 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+</div>
+<div class="flex justify-between items-center bg-pastel-blue rounded-full px-4 py-2 border border-blue-200 cursor-pointer hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-blue-800">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span class="font-label-lg text-label-lg">Sắp tới</span>
+</div>
+<span class="bg-blue-200 text-blue-900 px-2 py-0.5 rounded-full text-xs font-bold">5</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container rounded-full px-4 py-2 border border-surface-variant cursor-pointer hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+<span class="font-label-lg text-label-lg">Tạm hoãn</span>
+</div>
+<span class="bg-surface-variant text-on-surface px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+</div>
+<div class="flex justify-between items-center bg-pastel-red rounded-full px-4 py-2 border border-red-200 cursor-pointer hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3 text-red-800">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+<span class="font-label-lg text-label-lg">Đã hủy</span>
+</div>
+<span class="bg-red-200 text-red-900 px-2 py-0.5 rounded-full text-xs font-bold">0</span>
+</div>
+</div>
+<!-- CTA -->
+<div class="pt-6">
+<button class="w-full flex items-center justify-center gap-2 bg-soft-pink text-cow-spot rounded-full py-3 font-label-lg text-label-lg font-bold shadow-pressable hover:shadow-pressable-hover hover:translate-y-[2px] transition-all border-2 border-cow-spot">
+<span class="material-symbols-outlined">add</span>
+                    New Track
+                </button>
+</div>
+<div class="pt-4">
+<button class="w-full flex items-center justify-center gap-2 bg-surface-container text-on-surface-variant rounded-full py-2 font-label-sm text-label-sm border border-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                    Reset Local Store
+                </button>
+</div>
+</nav>
+<!-- Footer Nav -->
+<div class="pt-6 mt-6 border-t border-surface-variant space-y-2">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-highest rounded-full px-4 py-2 transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+                Help
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-highest rounded-full px-4 py-2 transition-all font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-72 flex flex-col h-screen bg-background relative overflow-hidden">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-desktop py-4 bg-background z-10 sticky top-0">
+<!-- Mobile Menu Button (Hidden on Desktop) -->
+<button class="md:hidden p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex items-center gap-4 hidden md:flex">
+<h1 class="font-headline-lg text-headline-lg font-bold text-tertiary">ChronosPlan</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined">calendar_today</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-highest transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-soft-pink overflow-hidden bg-surface-container cursor-pointer">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A small, stylized avatar portrait of a person with a friendly expression, soft lighting, matching the modern UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCld_Zj15ej02m7Qorgln3sgT3AhOrIBbhmzvNKmGd9XkwBbQ8wWioGKHWYAa9YrBzMWwrPJci6z3nlazD1HNE4AgU_L1HmVKv5Ipi_4U63JoPj43CimAM3CNhoLL8KFnhmibGDUrwtQJKqiB9yxsDKg8qejmIdOBoi-Fy-yt27PFzCjuF3qVuNm_-nzq2VGNwAzXDYqJuRrT71TllgjEvFMLMvpMI9rCIEpaOGW9vjDtRGjzB14UCb">
+</div>
+</div>
+</header>
+<!-- Calendar Toolbar -->
+<div class="px-margin-desktop py-4 border-b border-surface-variant flex flex-wrap gap-4 items-center justify-between bg-surface-container-lowest sticky top-[88px] z-10 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+<h2 class="font-headline-md text-headline-md font-bold">Thứ Tư, 29 tháng 7, 2026</h2>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">arrow_drop_down</span>
+</div>
+<span class="bg-pastel-green text-green-800 px-3 py-1 rounded-full text-sm font-semibold border border-green-200">Hôm nay</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full border border-surface-variant flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-tertiary text-on-tertiary font-label-lg text-label-lg shadow-sm hover:bg-tertiary/90 transition-colors">
+                    Hôm nay
+                </button>
+<button class="w-10 h-10 rounded-full border border-surface-variant flex items-center justify-center hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Schedule Grid Area -->
+<div class="flex-1 overflow-auto bg-surface-lowest relative overflow-x-auto" style="scrollbar-width: thin; scrollbar-color: #FFC0CB #f9ebe3;">
+<!-- Time Header -->
+<div class="flex border-b border-surface-variant bg-surface-container-lowest sticky top-0 z-20 min-w-[1200px]">
+<div class="w-16 flex-shrink-0 border-r border-surface-variant"></div>
+<div class="flex-1 grid grid-cols-12 min-w-[1000px]">
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">07:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">08:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">09:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">10:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">11:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">12:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">13:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">14:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">15:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">16:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant border-r border-surface-variant border-dashed">17:00</div>
+<div class="text-center py-2 text-sm text-on-surface-variant">18:00</div>
+</div>
+</div>
+<!-- Grid Body -->
+<div class="flex min-h-[800px] min-w-[1200px]">
+<!-- Row Numbers (Left) -->
+<div class="w-16 flex-shrink-0 border-r border-surface-variant bg-surface-container-lowest time-row-bg relative z-10">
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">1</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">2</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">3</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">4</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">5</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">6</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">7</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">8</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">9</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">10</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">11</div>
+<div class="h-[60px] flex items-center justify-center text-sm text-on-surface-variant">12</div>
+</div>
+<!-- Actual Grid -->
+<div class="flex-1 grid-bg min-w-[1000px] relative" id="schedule-grid">
+<!-- Cow Tracker Elements -->
+<div class="absolute inset-y-0 w-0.5 bg-cow-spot z-0" id="time-line-indicator" style="left: 36.3636%;"></div>
+<div class="absolute top-[2px] -ml-4 w-12 h-12 z-30 transition-all duration-700 ease-linear" id="cow-tracker" style="left: 36.3636%;"><div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-white border-2 border-soft-pink rounded-full px-3 py-1 shadow-sm whitespace-nowrap transition-opacity duration-500 z-40 opacity-100" id="cow-speech-bubble"><span class="text-[10px] font-bold text-cow-spot" id="cow-speech-text">Cố gắng lên, Moo-ve thôi!</span><div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-white border-r-2 border-b-2 border-soft-pink rotate-45"></div></div>
+<img alt="Tracker Cow" class="w-full h-full object-contain drop-shadow-md animate-cow-walk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBin37itLYhRkRc8USeXzO82Lku9k64dNP9TzFuRTuB64cKG0dCT4w03mU4zQp_PRApqIj_zk_Jv_AzGGmhkAb_qJXco53KhjSCz1Bw7L85QWBXxYCZgO1oL6z_45tlqnRzuQ9Fl3I7NmGwCvikeCQ4C4mHonVvtKPsyy4k5Smpke5kvkMi3L6eG12AV30cx5FiKS1rSUJ8P3harq4HPiNybpG2NZwJN8BjmRqTaA4PULmdaI-bOMUlz69sDNqRZO_TkA" style="transform: scaleX(-1);">
+</div>
+<!-- Horizontal Progress Line -->
+<div class="absolute top-[30px] left-0 right-[20%] h-1 bg-surface-variant/50 rounded-full z-0"></div>
+<!-- Task Blocks -->
+<!-- Block 1: Team Sync -->
+<div class="absolute top-[10px] left-[5%] w-[25%] h-[40px] bg-tertiary text-on-tertiary rounded-full shadow-md flex items-center px-3 gap-2 z-10 cursor-pointer hover:scale-[1.01] transition-transform">
+<span class="material-symbols-outlined text-[16px] opacity-70">drag_indicator</span>
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span class="material-symbols-outlined text-[16px]">group</span>
+<span class="font-label-sm truncate flex-1">Team Sync: C...</span>
+<span class="bg-moo-green text-white text-[10px] px-2 py-0.5 rounded-full font-bold ml-auto shrink-0">Đã xong</span>
+</div>
+<!-- Block 2: Review thiết kế -->
+<div class="absolute top-[70px] left-[20%] w-[40%] h-[40px] bg-moo-green text-white rounded-full shadow-md flex items-center px-3 gap-2 z-10 cursor-pointer hover:scale-[1.01] transition-transform border border-green-700">
+<span class="material-symbols-outlined text-[16px] opacity-70">drag_indicator</span>
+<span class="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+<span class="material-symbols-outlined text-[16px]">work_outline</span>
+<span class="font-label-sm truncate flex-1">Review thiết kế giao diện</span>
+<span class="bg-soft-pink text-cow-spot text-[10px] px-2 py-0.5 rounded-full font-bold ml-auto shrink-0">Sắp tới</span>
+</div>
+<!-- Block 3: Lunch/Brown -->
+<div class="absolute top-[130px] left-[40%] w-[15%] h-[40px] bg-cow-spot text-white rounded-full shadow-md flex items-center px-3 gap-2 z-10 cursor-pointer hover:scale-[1.01] transition-transform">
+<span class="material-symbols-outlined text-[16px] opacity-70">drag_indicator</span>
+<span class="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+<span class="material-symbols-outlined text-[16px]">restaurant</span>
+<span class="bg-soft-pink text-cow-spot text-[10px] px-2 py-0.5 rounded-full font-bold ml-auto shrink-0">Sắp tới</span>
+</div>
+<!-- Block 4: Dã ngoại -->
+<div class="absolute top-[190px] left-[70%] w-[20%] h-[40px] bg-pastel-green border border-green-200 text-green-800 rounded-full shadow-md flex items-center px-3 gap-2 z-10 cursor-pointer hover:scale-[1.01] transition-transform">
+<span class="material-symbols-outlined text-[16px] opacity-70">drag_indicator</span>
+<span class="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+<span class="material-symbols-outlined text-[16px]">photo_camera</span>
+<span class="font-label-sm truncate flex-1">Dã ngọa...</span>
+<span class="bg-soft-pink text-cow-spot text-[10px] px-2 py-0.5 rounded-full font-bold ml-auto shrink-0">Sắp tới</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    function updateCowTracker() {
+        const cow = document.getElementById('cow-tracker');
+        const indicator = document.getElementById('time-line-indicator');
+        if (!cow || !indicator) return;
+
+        // Requirement: Assume current time is exactly 11:00
+        const currentHours = 11;
+        const currentMinutes = 0;
+        
+        // Timeline bounds (07:00 to 18:00 based on the grid labels)
+        const startHour = 7;
+        const totalHours = 11; // 18 - 7
+        
+        // Current total minutes from start
+        const totalMinutesFromStart = (currentHours - startHour) * 60 + currentMinutes;
+        const totalMinutesRange = totalHours * 60;
+        
+        // Calculate percentage position
+        let percentage = (totalMinutesFromStart / totalMinutesRange) * 100;
+        
+        // Only show if within the timeline range
+        if (percentage >= 0 && percentage <= 100) {
+            cow.style.left = percentage + '%';
+            cow.classList.remove('hidden');
+            indicator.style.left = percentage + '%';
+            indicator.classList.remove('hidden');
+        } else {
+            cow.classList.add('hidden');
+            indicator.classList.add('hidden');
+        }
+    }
+
+    // Update logic remains but initialized for 11:00 version
+    setInterval(updateCowTracker, 60000);
+    // Initial call
+    updateCowTracker();
+</script>
+<script>
+    const messages = ["Cố gắng lên, Moo-ve thôi!", "Đã đến lúc làm việc rồi!", "Bạn đang làm rất tốt!", "Đừng quên nghỉ ngơi nhé!"]; 
+    let msgIndex = 0; 
+    function cycleSpeech() { 
+        const bubble = document.getElementById('cow-speech-bubble'); 
+        const text = document.getElementById('cow-speech-text'); 
+        if (!bubble || !text) return; 
+        bubble.classList.add('opacity-0'); 
+        setTimeout(() => { 
+            text.textContent = messages[msgIndex]; 
+            msgIndex = (msgIndex + 1) % messages.length; 
+            bubble.classList.remove('opacity-0'); 
+            bubble.classList.add('opacity-100'); 
+        }, 500); 
+    } 
+    setInterval(cycleSpeech, 5000); 
+    cycleSpeech();
+</script>
+
+
+</body></html>

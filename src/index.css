@@ -1,41 +1,22 @@
-/* Global Reset & Full Width Layout */
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #f6f9ff;
-  --border: #e5e4e7;
-  --sans: 'Manrope', system-ui, -apple-system, sans-serif;
-  
-  font-family: var(--sans);
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Global Custom CSS for Moo-dern ChronosPlan */
+body {
+  background-color: #fff8f5;
+  color: #211a15;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden;
-  background-color: #f6f9ff;
+/* Custom Scrollbar for Moo-dern theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-
-#root {
-  width: 100%;
-  max-width: 100vw;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  overflow-x: hidden;
+::-webkit-scrollbar-track {
+  background: #f9ebe3;
 }
-
-*, *::before, *::after {
-  box-sizing: border-box;
+::-webkit-scrollbar-thumb {
+  background: #cdc5c0;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #81515a;
 }
