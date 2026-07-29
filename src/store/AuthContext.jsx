@@ -5,37 +5,38 @@ const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider = ({ children }) => {
-  const [userList, setUserList] = useState([
-    {
-      uid: 'user_lead_1',
-      email: 'lead@chronos.vn',
-      password: '123',
-      name: 'Nguyễn Văn Lead',
-      role: 'Lead',
-      skillRole: 'Leader (Trưởng đoàn)',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Lead'
-    },
-    {
-      uid: 'user_member_1',
-      email: 'thanhvien1@chronos.vn',
-      password: '123',
-      name: 'Trần Thị Thu',
-      role: 'Member',
-      skillRole: 'Member (Thành viên)',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Thu'
-    },
-    {
-      uid: 'user_member_2',
-      email: 'thanhvien2@chronos.vn',
-      password: '123',
-      name: 'Lê Hoàng Nam',
-      role: 'Member',
-      skillRole: 'Member (Thành viên)',
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nam'
-    }
-  ]);
+const DEBUG_DEFAULT_USERS = [
+  {
+    uid: 'user_lead_1',
+    email: 'lead@chronos.vn',
+    password: '123',
+    name: 'Nguyễn Văn Lead',
+    role: 'Lead',
+    skillRole: 'Leader (Trưởng đoàn)',
+    avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Lead'
+  },
+  {
+    uid: 'user_member_1',
+    email: 'thanhvien1@chronos.vn',
+    password: '123',
+    name: 'Trần Thị Thu',
+    role: 'Member',
+    skillRole: 'Member (Thành viên)',
+    avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Thu'
+  },
+  {
+    uid: 'user_member_2',
+    email: 'thanhvien2@chronos.vn',
+    password: '123',
+    name: 'Lê Hoàng Nam',
+    role: 'Member',
+    skillRole: 'Member (Thành viên)',
+    avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nam'
+  }
+];
 
+export const AuthProvider = ({ children }) => {
+  const [userList, setUserList] = useState(DEBUG_DEFAULT_USERS);
   const [currentUser, setCurrentUser] = useState(null);
 
   // Sync users real-time from Firestore
@@ -85,8 +86,7 @@ export const AuthProvider = ({ children }) => {
     const existing = userList.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (existing) throw new Error('Email này đã được sử dụng!');
 
-    const hasLead = userList.some(u => u.role === 'Lead');
-    const assignedRole = (!hasLead || role === 'Lead') ? 'Lead' : 'Member';
+    const assignedRole = role === 'Lead' ? 'Lead' : 'Member';
 
     let uid = 'user_' + Date.now();
 
@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }) => {
     const sampleEvtId = 'evt_' + Date.now();
     const sampleEvent = {
       id: sampleEvtId,
-      title: `Chào mừng ${name} - Sự kiện lịch trình khởi tạo`,
+      title: `Chào mừng ${name} - Lịch trình khởi tạo`,
       description: 'Đây là sự kiện ví dụ khởi tạo ban đầu dành riêng cho tài khoản của bạn.',
       date: todayStr,
       startTime: '09:00',
@@ -188,4 +188,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-

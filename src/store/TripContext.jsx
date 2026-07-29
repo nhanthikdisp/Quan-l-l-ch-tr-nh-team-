@@ -9,17 +9,119 @@ export const useTrip = () => useContext(TripContext);
 
 const getTodayStr = () => new Date().toISOString().split('T')[0];
 
+const DEBUG_USER_IDS = ['user_lead_1', 'user_member_1', 'user_member_2'];
+const DEBUG_USER_EMAILS = ['lead@chronos.vn', 'thanhvien1@chronos.vn', 'thanhvien2@chronos.vn'];
+const DEBUG_EVENT_IDS = ['evt_1', 'evt_2', 'evt_3', 'evt_4'];
+
+const isDebugUser = (user) => {
+  if (!user) return false;
+  const uid = user.uid || user.id || '';
+  const email = (user.email || '').toLowerCase();
+  return DEBUG_USER_IDS.includes(uid) || DEBUG_USER_EMAILS.includes(email);
+};
+
 const DEFAULT_MEMBERS = [
   { id: 'user_lead_1', email: 'lead@chronos.vn', name: 'Nguyễn Văn Lead', role: 'Lead', skillRole: 'Dẫn đoàn', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Lead' },
   { id: 'user_member_1', email: 'thanhvien1@chronos.vn', name: 'Trần Thị Thu', role: 'Member', skillRole: 'Xem map & Chụp hình', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Thu' },
   { id: 'user_member_2', email: 'thanhvien2@chronos.vn', name: 'Lê Hoàng Nam', role: 'Member', skillRole: 'Nấu ăn & Thủ quỹ', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nam' },
 ];
 
+const DEFAULT_EVENTS_BUILDER = (todayStr) => [
+  {
+    id: 'evt_1',
+    title: 'Team Sync: Chiến lược Q4',
+    description: 'Tập trung thảo luận định hướng quý 4.',
+    date: todayStr,
+    startTime: '08:30',
+    endTime: '11:00',
+    startHour: 8.5,
+    durationHours: 2.5,
+    location: 'Phòng họp A',
+    activityType: 'Công việc',
+    status: 'Đã xong',
+    completed: true,
+    assignedMembers: ['user_lead_1', 'user_member_1', 'user_member_2'],
+    participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn', 'thanhvien2@chronos.vn'],
+    cost: 600000,
+    payerId: 'user_lead_1',
+    payerEmail: 'lead@chronos.vn',
+    createdBy: 'user_lead_1',
+    createdByName: 'Nguyễn Văn Lead',
+    row: 1
+  },
+  {
+    id: 'evt_2',
+    title: 'Review thiết kế giao diện',
+    description: 'Đánh giá các bản thiết kế UI/UX.',
+    date: todayStr,
+    startTime: '10:00',
+    endTime: '14:00',
+    startHour: 10,
+    durationHours: 4,
+    location: 'Creative Lab',
+    activityType: 'Công việc',
+    status: 'Đang diễn ra',
+    completed: false,
+    assignedMembers: ['user_lead_1', 'user_member_1'],
+    participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn'],
+    cost: 450000,
+    payerId: 'user_member_2',
+    payerEmail: 'thanhvien2@chronos.vn',
+    createdBy: 'user_lead_1',
+    createdByName: 'Nguyễn Văn Lead',
+    row: 2
+  },
+  {
+    id: 'evt_3',
+    title: 'Bữa trưa giao lưu thân mật',
+    description: 'Thưởng thức ăn trưa cùng toàn đội.',
+    date: todayStr,
+    startTime: '12:00',
+    endTime: '13:30',
+    startHour: 12,
+    durationHours: 1.5,
+    location: 'Nhà hàng Pizza 4P\'s',
+    activityType: 'Ăn uống',
+    status: 'Sắp tới',
+    completed: false,
+    assignedMembers: ['user_lead_1', 'user_member_1', 'user_member_2'],
+    participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn', 'thanhvien2@chronos.vn'],
+    cost: 350000,
+    payerId: 'user_member_1',
+    payerEmail: 'thanhvien1@chronos.vn',
+    createdBy: 'user_member_1',
+    createdByName: 'Trần Thị Thu',
+    row: 3
+  },
+  {
+    id: 'evt_4',
+    title: 'Dã ngoại ngắm cảnh hoàng hôn',
+    description: 'Hoạt động ngắm cảnh teambuilding.',
+    date: todayStr,
+    startTime: '15:30',
+    endTime: '17:30',
+    startHour: 15.5,
+    durationHours: 2,
+    location: 'Công viên Hồ Tây',
+    activityType: 'Ngắm cảnh',
+    status: 'Sắp tới',
+    completed: false,
+    assignedMembers: ['user_lead_1', 'user_member_1'],
+    participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn'],
+    cost: 200000,
+    payerId: 'user_lead_1',
+    payerEmail: 'lead@chronos.vn',
+    createdBy: 'user_lead_1',
+    createdByName: 'Nguyễn Văn Lead',
+    row: 4
+  }
+];
+
 export const TripProvider = ({ children }) => {
   const { currentUser, isLead } = useAuth();
   const todayStr = getTodayStr();
 
-  // Tắt hoàn toàn việc lưu/đọc từ localStorage để ưu tiên chạy 100% Firebase Backend
+  // Clear obsolete localStorage caches
   useEffect(() => {
     try {
       localStorage.removeItem('chronos_trip_members');
@@ -28,97 +130,70 @@ export const TripProvider = ({ children }) => {
   }, []);
 
   const [members, setMembers] = useState(DEFAULT_MEMBERS);
+  const [events, setEvents] = useState(() => DEFAULT_EVENTS_BUILDER(todayStr));
 
-  const [events, setEvents] = useState(() => [
-    {
-      id: 'evt_1',
-      title: 'Team Sync: Chiến lược Q4',
-      description: 'Tập trung thảo luận định hướng quý 4.',
-      date: todayStr,
-      startTime: '08:30',
-      endTime: '11:00',
-      startHour: 8.5,
-      durationHours: 2.5,
-      location: 'Phòng họp A',
-      activityType: 'Công việc',
-      status: 'Đã xong',
-      completed: true,
-      assignedMembers: ['user_lead_1', 'user_member_1', 'user_member_2'],
-      participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn', 'thanhvien2@chronos.vn'],
-      cost: 600000,
-      payerId: 'user_lead_1',
-      payerEmail: 'lead@chronos.vn',
-      createdBy: 'user_lead_1',
-      createdByName: 'Nguyễn Văn Lead',
-      row: 1
-    },
-    {
-      id: 'evt_2',
-      title: 'Review thiết kế giao diện',
-      description: 'Đánh giá các bản thiết kế UI/UX.',
-      date: todayStr,
-      startTime: '10:00',
-      endTime: '14:00',
-      startHour: 10,
-      durationHours: 4,
-      location: 'Creative Lab',
-      activityType: 'Công việc',
-      status: 'Đang diễn ra',
-      completed: false,
-      assignedMembers: ['user_lead_1', 'user_member_1'],
-      participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn'],
-      cost: 450000,
-      payerId: 'user_member_2',
-      payerEmail: 'thanhvien2@chronos.vn',
-      createdBy: 'user_lead_1',
-      createdByName: 'Nguyễn Văn Lead',
-      row: 2
-    },
-    {
-      id: 'evt_3',
-      title: 'Bữa trưa giao lưu thân mật',
-      description: 'Thưởng thức ăn trưa cùng toàn đội.',
-      date: todayStr,
-      startTime: '12:00',
-      endTime: '13:30',
-      startHour: 12,
-      durationHours: 1.5,
-      location: 'Nhà hàng Pizza 4P\'s',
-      activityType: 'Ăn uống',
-      status: 'Sắp tới',
-      completed: false,
-      assignedMembers: ['user_lead_1', 'user_member_1', 'user_member_2'],
-      participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn', 'thanhvien2@chronos.vn'],
-      cost: 350000,
-      payerId: 'user_member_1',
-      payerEmail: 'thanhvien1@chronos.vn',
-      createdBy: 'user_member_1',
-      createdByName: 'Trần Thị Thu',
-      row: 3
-    },
-    {
-      id: 'evt_4',
-      title: 'Dã ngoại ngắm cảnh hoàng hôn',
-      description: 'Hoạt động ngắm cảnh teambuilding.',
-      date: todayStr,
-      startTime: '15:30',
-      endTime: '17:30',
-      startHour: 15.5,
-      durationHours: 2,
-      location: 'Công viên Hồ Tây',
-      activityType: 'Ngắm cảnh',
-      status: 'Sắp tới',
-      completed: false,
-      assignedMembers: ['user_lead_1', 'user_member_1'],
-      participantEmails: ['lead@chronos.vn', 'thanhvien1@chronos.vn'],
-      cost: 200000,
-      payerId: 'user_lead_1',
-      payerEmail: 'lead@chronos.vn',
-      createdBy: 'user_lead_1',
-      createdByName: 'Nguyễn Văn Lead',
-      row: 4
+  // Sync state when currentUser changes (Debug demo user vs Newly registered user)
+  useEffect(() => {
+    if (!currentUser) return;
+
+    if (isDebugUser(currentUser)) {
+      setMembers(prev => {
+        const hasDebug = prev.some(m => DEBUG_USER_IDS.includes(m.id));
+        return hasDebug ? prev : DEFAULT_MEMBERS;
+      });
+
+      setEvents(prev => {
+        const hasDebug = prev.some(e => DEBUG_EVENT_IDS.includes(e.id));
+        return hasDebug ? prev : DEFAULT_EVENTS_BUILDER(todayStr);
+      });
+    } else {
+      // NEW USER (Non-debug user)
+      setMembers(prev => {
+        const cleaned = prev.filter(m => !DEBUG_USER_IDS.includes(m.id) && !DEBUG_USER_EMAILS.includes((m.email || '').toLowerCase()));
+        const userObj = {
+          id: currentUser.uid,
+          email: currentUser.email,
+          name: currentUser.name,
+          role: currentUser.role || 'Lead',
+          skillRole: currentUser.skillRole || (currentUser.role === 'Lead' ? 'Leader (Trưởng đoàn)' : 'Member (Thành viên)'),
+          avatar: currentUser.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(currentUser.name)}`
+        };
+        const exists = cleaned.some(m => m.id === currentUser.uid || (m.email && m.email.toLowerCase() === (currentUser.email || '').toLowerCase()));
+        return exists ? cleaned : [userObj, ...cleaned];
+      });
+
+      setEvents(prev => {
+        const cleaned = prev.filter(e => !DEBUG_EVENT_IDS.includes(e.id));
+        const userEvts = cleaned.filter(e => e.createdBy === currentUser.uid || e.assignedMembers?.includes(currentUser.uid) || e.participantEmails?.includes(currentUser.email));
+        if (userEvts.length === 0) {
+          const sampleEvt = {
+            id: 'evt_' + Date.now(),
+            title: `Chào mừng ${currentUser.name} - Lịch trình mới`,
+            description: 'Đây là sự kiện khởi đầu cho lịch trình chuyến đi của bạn.',
+            date: todayStr,
+            startTime: '09:00',
+            endTime: '10:30',
+            startHour: 9,
+            durationHours: 1.5,
+            location: 'Địa điểm cá nhân',
+            activityType: 'Công việc',
+            status: currentUser.role === 'Lead' ? 'Sắp tới' : 'Chờ duyệt',
+            completed: false,
+            assignedMembers: [currentUser.uid],
+            participantEmails: [currentUser.email],
+            cost: 0,
+            payerId: currentUser.uid,
+            payerEmail: currentUser.email,
+            createdBy: currentUser.uid,
+            createdByName: currentUser.name,
+            row: 1
+          };
+          return [sampleEvt];
+        }
+        return cleaned;
+      });
     }
-  ]);
+  }, [currentUser]);
 
   // Firestore sync listener
   useEffect(() => {
@@ -128,13 +203,20 @@ export const TripProvider = ({ children }) => {
           if (!snapshot.empty) {
             const fetched = [];
             snapshot.forEach(doc => fetched.push({ id: doc.id, ...doc.data() }));
-            setEvents(fetched);
+            if (currentUser && !isDebugUser(currentUser)) {
+              const nonDebug = fetched.filter(e => !DEBUG_EVENT_IDS.includes(e.id) && (e.createdBy === currentUser.uid || e.assignedMembers?.includes(currentUser.uid) || e.participantEmails?.includes(currentUser.email)));
+              if (nonDebug.length > 0) {
+                setEvents(nonDebug);
+              }
+            } else {
+              setEvents(fetched);
+            }
           }
         }, (err) => console.warn('Firestore sync note:', err));
         return () => unsub();
       } catch (e) { }
     }
-  }, []);
+  }, [currentUser]);
 
   // Realtime Status Engine
   useEffect(() => {
@@ -462,4 +544,3 @@ export const TripProvider = ({ children }) => {
     </TripContext.Provider>
   );
 };
-
