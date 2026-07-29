@@ -1,18 +1,14 @@
 import React from 'react';
-import { useTrip } from '../context/TripContext';
+import { useTrip } from '../../store/TripContext';
 
 export default function ExpensesView() {
   const { events, members, calculateExpenses } = useTrip();
-
   const { totalTripCost, memberStats, settlements } = calculateExpenses();
-
-  // Valid official events with expense
   const expenseEvents = events.filter(e => e.cost > 0 && e.status !== 'Hủy' && e.status !== 'Chờ duyệt');
 
   return (
     <div className="space-y-6">
 
-      {/* Top Banner: Total Trip Expense Overview */}
       <div className="bg-surface-container-lowest rounded-3xl p-6 lg:p-8 shadow-tactile border-2 border-cow-spot relative overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
@@ -29,7 +25,7 @@ export default function ExpensesView() {
 
           <div className="flex flex-wrap gap-4 bg-surface-container-low p-4 rounded-2xl border border-surface-variant">
             <div className="text-center px-4 border-r border-surface-variant">
-              <p className="text-[11px] font-bold text-on-surface-variant uppercase">Tổng sự kiện có phí</p>
+              <p className="text-[11px] font-bold text-on-surface-variant uppercase">Sự kiện có phí</p>
               <p className="text-lg font-extrabold text-cow-spot">{expenseEvents.length}</p>
             </div>
             <div className="text-center px-4 border-r border-surface-variant">
@@ -39,14 +35,13 @@ export default function ExpensesView() {
               </p>
             </div>
             <div className="text-center px-4">
-              <p className="text-[11px] font-bold text-on-surface-variant uppercase">Thành viên tham gia</p>
+              <p className="text-[11px] font-bold text-on-surface-variant uppercase">Thành viên</p>
               <p className="text-lg font-extrabold text-cow-spot">{members.length} người</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 1. "AI NỢ AI BAO NHIÊU" - SETTLEMENT MATRIX */}
       <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
         <div className="flex items-center gap-2 mb-4">
           <span className="material-symbols-outlined text-tertiary text-2xl">account_balance_wallet</span>
@@ -56,7 +51,6 @@ export default function ExpensesView() {
           </div>
         </div>
 
-        {/* Member Expense Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>
@@ -114,16 +108,11 @@ export default function ExpensesView() {
         </div>
       </div>
 
-      {/* 2. SETTLEMENT SUGGESTION CARDS */}
       <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
         <h3 className="text-base font-extrabold text-cow-spot flex items-center gap-2 mb-3">
           <span className="material-symbols-outlined text-tertiary">swap_horiz</span>
           Gợi Ý Chuyển Khoản Quyết Toán Tối Ưu
         </h3>
-        <p className="text-xs text-on-surface-variant mb-4 font-medium">
-          Hệ thống tự động tính toán cách chuyển tiền ít giao dịch nhất giữa các thành viên:
-        </p>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {settlements.map((s, idx) => (
             <div key={idx} className="p-4 bg-surface-container-low rounded-2xl border border-surface-variant flex items-center justify-between gap-3">
@@ -150,51 +139,6 @@ export default function ExpensesView() {
             <div className="col-span-2 text-center py-6 text-xs text-on-surface-variant font-semibold">
               Tất cả các chi phí đã được cân bằng hoàn toàn! Không có giao dịch nợ nào cần xử lý.
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* 3. EVENT EXPENSE LOG */}
-      <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
-        <h3 className="text-base font-extrabold text-cow-spot flex items-center gap-2 mb-4">
-          <span className="material-symbols-outlined text-tertiary">receipt_long</span>
-          Lịch Sử Giao Dịch Chi Tiết Từng Sự Kiện
-        </h3>
-
-        <div className="space-y-3">
-          {expenseEvents.map(evt => {
-            const payer = members.find(m => m.id === evt.payerId);
-            const assignedCount = evt.assignedMembers?.length || 1;
-            const perPersonCost = Math.round(evt.cost / assignedCount);
-
-            return (
-              <div key={evt.id} className="p-4 bg-surface-container-low rounded-2xl border border-surface-variant flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-extrabold text-cow-spot bg-soft-pink px-2.5 py-0.5 rounded-full">
-                      {evt.activityType}
-                    </span>
-                    <span className="text-xs font-bold text-on-surface-variant">
-                      🕒 {evt.startTime} – {evt.endTime}
-                    </span>
-                  </div>
-                  <h4 className="font-extrabold text-sm text-cow-spot">{evt.title}</h4>
-                  <p className="text-xs text-on-surface-variant font-semibold">
-                    Người ứng trả: <strong className="text-cow-spot">{payer?.name || 'Chưa chọn'}</strong> • Chia cho {assignedCount} thành viên ({perPersonCost.toLocaleString('vi-VN')} VNĐ/người)
-                  </p>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-base font-extrabold text-green-800 bg-pastel-green px-3 py-1 rounded-full border border-green-200">
-                    {evt.cost.toLocaleString('vi-VN')} VNĐ
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-
-          {expenseEvents.length === 0 && (
-            <p className="text-xs text-center text-on-surface-variant py-6">Chưa có sự kiện nào phát sinh chi phí.</p>
           )}
         </div>
       </div>

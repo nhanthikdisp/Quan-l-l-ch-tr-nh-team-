@@ -1,18 +1,16 @@
 import React from 'react';
-import { useTrip } from '../context/TripContext';
+import { useTrip } from '../../store/TripContext';
 
 export default function StatisticsView() {
-  const { events, members, currentOngoingEvent, calculateExpenses } = useTrip();
-  const { totalTripCost, memberStats } = calculateExpenses();
+  const { events, currentOngoingEvent, calculateExpenses } = useTrip();
+  const { memberStats } = calculateExpenses();
 
-  // Activity Type Counts
   const activityCounts = events.reduce((acc, e) => {
     const type = e.activityType || 'Khác';
     acc[type] = (acc[type] || 0) + 1;
     return acc;
   }, {});
 
-  // Status Counts
   const statusCounts = events.reduce((acc, e) => {
     const st = e.status || 'Khác';
     acc[st] = (acc[st] || 0) + 1;
@@ -24,7 +22,6 @@ export default function StatisticsView() {
   return (
     <div className="space-y-6">
 
-      {/* 1. ONGOING EVENT SPOTLIGHT WIDGET */}
       <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border-2 border-cow-spot relative overflow-hidden">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full bg-pastel-purple flex items-center justify-center text-purple-900 font-bold border border-purple-300">
@@ -60,10 +57,8 @@ export default function StatisticsView() {
         )}
       </div>
 
-      {/* 2. CHARTS & STATS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        {/* Chart 1: Event by Activity Type */}
         <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
           <h3 className="text-base font-extrabold text-cow-spot flex items-center gap-2 mb-4">
             <span className="material-symbols-outlined text-tertiary">category</span>
@@ -91,7 +86,6 @@ export default function StatisticsView() {
           </div>
         </div>
 
-        {/* Chart 2: Event by Status */}
         <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
           <h3 className="text-base font-extrabold text-cow-spot flex items-center gap-2 mb-4">
             <span className="material-symbols-outlined text-tertiary">pie_chart</span>
@@ -129,7 +123,6 @@ export default function StatisticsView() {
 
       </div>
 
-      {/* 3. EXPENSE FLOW & FINANCIAL SUMMARY */}
       <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
         <h3 className="text-base font-extrabold text-cow-spot flex items-center gap-2 mb-4">
           <span className="material-symbols-outlined text-tertiary">monetization_on</span>

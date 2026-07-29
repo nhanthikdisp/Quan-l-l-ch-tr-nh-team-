@@ -1,12 +1,11 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useTrip } from '../context/TripContext';
+import { useAuth } from '../../store/AuthContext';
+import { useTrip } from '../../store/TripContext';
 
 export default function Navigation({ activeTab, setActiveTab }) {
-  const { currentUser, isLead, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const { events } = useTrip();
 
-  // Calculate status counts
   const completedCount = events.filter(e => e.status === 'Đã xong' || e.completed).length;
   const uncompletedCount = events.filter(e => e.status !== 'Đã xong' && !e.completed && e.status !== 'Hủy' && e.status !== 'Chờ duyệt').length;
   const ongoingCount = events.filter(e => e.status === 'Đang diễn ra').length;
@@ -14,8 +13,6 @@ export default function Navigation({ activeTab, setActiveTab }) {
   const pausedCount = events.filter(e => e.status === 'Tạm hoãn').length;
   const cancelledCount = events.filter(e => e.status === 'Hủy').length;
   const pendingCount = events.filter(e => e.status === 'Chờ duyệt').length;
-
-  const totalStatusCount = events.length;
 
   return (
     <aside className="fixed left-0 top-0 h-full w-72 flex flex-col p-6 z-40 bg-surface-container-low shadow-sm rounded-r-[2rem] border-r border-surface-variant overflow-y-auto hidden md:flex">
@@ -33,8 +30,6 @@ export default function Navigation({ activeTab, setActiveTab }) {
 
       {/* Main Nav Tabs */}
       <nav className="flex-1 space-y-2">
-        
-        {/* Active View Selector */}
         <button
           onClick={() => setActiveTab('schedule')}
           className={`w-full flex justify-between items-center rounded-full px-4 py-3 font-semibold text-sm transition-all cursor-pointer ${
@@ -52,7 +47,6 @@ export default function Navigation({ activeTab, setActiveTab }) {
           </span>
         </button>
 
-        {/* View Switchers for Members, Expenses, Statistics */}
         <div className="flex flex-col gap-1 pt-1 pb-2">
           <button
             onClick={() => setActiveTab('members')}
@@ -88,12 +82,12 @@ export default function Navigation({ activeTab, setActiveTab }) {
         {/* Status Breakdown Section */}
         <div className="pt-4 pb-2">
           <h2 className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider px-2">
-            THỐNG KÊ TRẠNG THÁI ({totalStatusCount})
+            THỐNG KÊ TRẠNG THÁI ({events.length})
           </h2>
         </div>
 
         <div className="space-y-2 text-xs font-semibold">
-          <div className="flex justify-between items-center bg-pastel-green rounded-full px-4 py-2 border border-green-200 cursor-pointer hover:shadow-xs">
+          <div className="flex justify-between items-center bg-pastel-green rounded-full px-4 py-2 border border-green-200">
             <div className="flex items-center gap-3 text-green-800">
               <span className="material-symbols-outlined text-[18px]">check_circle</span>
               <span>Đã hoàn thành</span>
@@ -101,7 +95,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
             <span className="bg-green-200 text-green-900 px-2 py-0.5 rounded-full font-bold">{completedCount}</span>
           </div>
 
-          <div className="flex justify-between items-center bg-pastel-yellow rounded-full px-4 py-2 border border-yellow-200 cursor-pointer hover:shadow-xs">
+          <div className="flex justify-between items-center bg-pastel-yellow rounded-full px-4 py-2 border border-yellow-200">
             <div className="flex items-center gap-3 text-yellow-900">
               <span className="material-symbols-outlined text-[18px]">pending_actions</span>
               <span>Chưa hoàn thành</span>
@@ -109,7 +103,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
             <span className="bg-yellow-200 text-yellow-900 px-2 py-0.5 rounded-full font-bold">{uncompletedCount}</span>
           </div>
 
-          <div className="flex justify-between items-center bg-pastel-purple rounded-full px-4 py-2 border border-purple-200 cursor-pointer hover:shadow-xs">
+          <div className="flex justify-between items-center bg-pastel-purple rounded-full px-4 py-2 border border-purple-200">
             <div className="flex items-center gap-3 text-purple-800">
               <span className="material-symbols-outlined text-[18px]">play_circle</span>
               <span>Đang diễn ra</span>
@@ -117,7 +111,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
             <span className="bg-purple-200 text-purple-900 px-2 py-0.5 rounded-full font-bold">{ongoingCount}</span>
           </div>
 
-          <div className="flex justify-between items-center bg-pastel-blue rounded-full px-4 py-2 border border-blue-200 cursor-pointer hover:shadow-xs">
+          <div className="flex justify-between items-center bg-pastel-blue rounded-full px-4 py-2 border border-blue-200">
             <div className="flex items-center gap-3 text-blue-800">
               <span className="material-symbols-outlined text-[18px]">schedule</span>
               <span>Sắp tới</span>
@@ -125,7 +119,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
             <span className="bg-blue-200 text-blue-900 px-2 py-0.5 rounded-full font-bold">{upcomingCount}</span>
           </div>
 
-          <div className="flex justify-between items-center bg-surface-container rounded-full px-4 py-2 border border-surface-variant cursor-pointer hover:shadow-xs">
+          <div className="flex justify-between items-center bg-surface-container rounded-full px-4 py-2 border border-surface-variant">
             <div className="flex items-center gap-3 text-on-surface-variant">
               <span className="material-symbols-outlined text-[18px]">pause_circle</span>
               <span>Tạm hoãn</span>
@@ -133,7 +127,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
             <span className="bg-surface-variant text-on-surface px-2 py-0.5 rounded-full font-bold">{pausedCount}</span>
           </div>
 
-          <div className="flex justify-between items-center bg-pastel-red rounded-full px-4 py-2 border border-red-200 cursor-pointer hover:shadow-xs">
+          <div className="flex justify-between items-center bg-pastel-red rounded-full px-4 py-2 border border-red-200">
             <div className="flex items-center gap-3 text-red-800">
               <span className="material-symbols-outlined text-[18px]">cancel</span>
               <span>Đã hủy</span>
@@ -142,7 +136,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
           </div>
 
           {pendingCount > 0 && (
-            <div className="flex justify-between items-center bg-orange-100 rounded-full px-4 py-2 border border-orange-200 cursor-pointer hover:shadow-xs">
+            <div className="flex justify-between items-center bg-orange-100 rounded-full px-4 py-2 border border-orange-200">
               <div className="flex items-center gap-3 text-orange-900">
                 <span className="material-symbols-outlined text-[18px]">hourglass_top</span>
                 <span>Chờ duyệt</span>
@@ -152,7 +146,6 @@ export default function Navigation({ activeTab, setActiveTab }) {
           )}
         </div>
 
-        {/* New Track Button */}
         <div className="pt-6">
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-new-track-modal'))}
@@ -163,11 +156,10 @@ export default function Navigation({ activeTab, setActiveTab }) {
           </button>
         </div>
 
-        {/* Reset Store Button */}
         <div className="pt-3">
           <button
             onClick={() => {
-              if (window.confirm('Khôi phục danh sách lịch trình mặc định?')) {
+              if (window.confirm('Khôi phục dữ liệu mặc định?')) {
                 localStorage.clear();
                 window.location.reload();
               }
@@ -180,12 +172,11 @@ export default function Navigation({ activeTab, setActiveTab }) {
         </div>
       </nav>
 
-      {/* Footer Nav */}
       <div className="pt-4 border-t border-surface-variant space-y-1">
         <a
           href="#help"
-          onClick={(e) => { e.preventDefault(); alert('ChronosPlan: Kéo thả các ô lịch trình để thay đổi khung giờ & vị trí hàng. Con bò biểu thị thời gian thực tế đang trôi!'); }}
-          className="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-highest rounded-full px-4 py-2 transition-all text-xs font-bold"
+          onClick={(e) => { e.preventDefault(); alert('ChronosPlan: Kéo thả ô lịch trình & thanh trượt 24H để sắp xếp lịch trình linh hoạt!'); }}
+          className="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-highest rounded-full px-4 py-2 text-xs font-bold"
         >
           <span className="material-symbols-outlined text-base">help</span>
           <span>Help</span>
@@ -193,7 +184,7 @@ export default function Navigation({ activeTab, setActiveTab }) {
 
         <button
           onClick={logout}
-          className="w-full flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-highest rounded-full px-4 py-2 transition-all text-xs font-bold cursor-pointer"
+          className="w-full flex items-center gap-3 text-on-surface-variant hover:bg-surface-container-highest rounded-full px-4 py-2 text-xs font-bold cursor-pointer"
         >
           <span className="material-symbols-outlined text-base">logout</span>
           <span>Logout ({currentUser?.name})</span>

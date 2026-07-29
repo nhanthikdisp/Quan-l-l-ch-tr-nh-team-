@@ -5,14 +5,13 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  // Initial default accounts for demonstration & immediate usage
   const [userList, setUserList] = useState([
     {
       uid: 'user_lead_1',
       email: 'lead@chronos.vn',
       password: '123',
       name: 'Nguyễn Văn Lead',
-      role: 'Lead', // Lead: Full power
+      role: 'Lead',
       skillRole: 'Dẫn đoàn',
       avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Lead'
     },
@@ -36,13 +35,12 @@ export const AuthProvider = ({ children }) => {
     }
   ]);
 
-  // Current logged in user. Default to Lead user for instant preview, can switch or logout
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('chronos_auth_user');
     if (saved) {
       try { return JSON.parse(saved); } catch (e) { }
     }
-    return userList[0]; // Default Lead user
+    return userList[0];
   });
 
   useEffect(() => {
@@ -55,23 +53,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = (email, password) => {
     const found = userList.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (!found) {
-      throw new Error('Email không tồn tại trên hệ thống!');
-    }
-    if (found.password && found.password !== password) {
-      throw new Error('Mật khẩu không chính xác!');
-    }
+    if (!found) throw new Error('Email không tồn tại!');
+    if (found.password && found.password !== password) throw new Error('Mật khẩu không chính xác!');
     setCurrentUser(found);
     return found;
   };
 
   const register = (name, email, password, role = 'Member', skillRole = 'Chưa phân công') => {
     const existing = userList.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (existing) {
-      throw new Error('Email này đã được sử dụng!');
-    }
+    if (existing) throw new Error('Email này đã được sử dụng!');
 
-    // Check if there is already a Lead
     const hasLead = userList.some(u => u.role === 'Lead');
     const assignedRole = (!hasLead || role === 'Lead') ? 'Lead' : 'Member';
 
@@ -90,15 +81,11 @@ export const AuthProvider = ({ children }) => {
     return newUser;
   };
 
-  const logout = () => {
-    setCurrentUser(null);
-  };
+  const logout = () => setCurrentUser(null);
 
   const switchAccount = (uid) => {
     const target = userList.find(u => u.uid === uid);
-    if (target) {
-      setCurrentUser(target);
-    }
+    if (target) setCurrentUser(target);
   };
 
   const isLead = currentUser?.role === 'Lead';

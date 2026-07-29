@@ -1,24 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useTrip } from '../context/TripContext';
+import { useAuth } from '../../store/AuthContext';
+import { useTrip } from '../../store/TripContext';
+import { timeStringToHour, hourToTimeString, formatDateDisplay } from '../../utils/formatters';
 
 const ACTIVITY_TYPES = ['Ăn uống', 'Ngắm cảnh', 'Bonding', 'Công việc', 'Khác'];
-
-// Convert time "HH:mm" to hour float (e.g. "08:30" => 8.5)
-function timeStringToHour(timeStr) {
-  if (!timeStr) return 0;
-  const [h, m] = timeStr.split(':').map(Number);
-  return (h || 0) + (m || 0) / 60;
-}
-
-// Convert hour float to "HH:mm"
-function hourToTimeString(hourNum) {
-  const h = Math.floor(hourNum);
-  const m = Math.round((hourNum - h) * 60);
-  const hStr = String(Math.max(0, Math.min(23, h))).padStart(2, '0');
-  const mStr = String(Math.max(0, Math.min(59, m))).padStart(2, '0');
-  return `${hStr}:${mStr}`;
-}
 
 export default function ScheduleView() {
   const { currentUser, isLead } = useAuth();
@@ -33,20 +18,14 @@ export default function ScheduleView() {
     toggleEventComplete
   } = useTrip();
 
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
-  });
-
+  const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [draggedTaskId, setDraggedTaskId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [editingEventId, setEditingEventId] = useState(null);
 
-  // Time Axis Slider & Scroll Control
   const gridScrollRef = useRef(null);
-  const [sliderHour, setSliderHour] = useState(8); // Default focused hour ~ 08:00 AM
+  const [sliderHour, setSliderHour] = useState(8);
 
-  // Form State
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(selectedDate);
@@ -60,7 +39,6 @@ export default function ScheduleView() {
   const [targetRow, setTargetRow] = useState(1);
   const [formError, setFormError] = useState('');
 
-  // Speech bubble quotes for Cow Tracker
   const [speechMsg, setSpeechMsg] = useState('Cố gắng lên, Moo-ve thôi!');
   const messages = [
     'Cố gắng lên, Moo-ve thôi!',
@@ -70,7 +48,6 @@ export default function ScheduleView() {
     'Hành trình tuyệt vời lắm!'
   ];
 
-  // Cycling cow speech bubble
   useEffect(() => {
     let idx = 0;
     const timer = setInterval(() => {
@@ -80,15 +57,13 @@ export default function ScheduleView() {
     return () => clearInterval(timer);
   }, []);
 
-  // Listen to window custom event from Navigation "+ New Track" button
   useEffect(() => {
     const handleOpenModal = () => openModal();
     window.addEventListener('open-new-track-modal', handleOpenModal);
     return () => window.removeEventListener('open-new-track-modal', handleOpenModal);
   }, []);
 
-  // Realtime Cow Tracker Percentage calculation for 24 Hours (00:00 to 24:00)
-  const [cowPercent, setCowPercent] = useState(46.8); // default current time
+  const [cowPercent, setCowPercent] = useState(46.8);
 
   useEffect(() => {
     const calcCowPos = () => {
@@ -111,7 +86,6 @@ export default function ScheduleView() {
     return () => clearInterval(interval);
   }, []);
 
-  // Sync Slider input with Grid Horizontal Scroll
   const handleSliderChange = (e) => {
     const targetHour = parseFloat(e.target.value);
     setSliderHour(targetHour);
@@ -132,7 +106,6 @@ export default function ScheduleView() {
     }
   };
 
-  // Jump to specific time preset
   const jumpToHour = (targetHour) => {
     setSliderHour(targetHour);
     if (gridScrollRef.current) {
@@ -142,19 +115,16 @@ export default function ScheduleView() {
     }
   };
 
-  // Jump to Current Cow position
   const jumpToCow = () => {
     const now = new Date();
     const currentH = now.getHours() + now.getMinutes() / 60;
-    jumpToHour(Math.max(0, currentH - 2)); // center around current time
+    jumpToHour(Math.max(0, currentH - 2));
   };
 
-  // Auto scroll to ~08:00 AM on initial load
   useEffect(() => {
     jumpToHour(7);
   }, [selectedDate]);
 
-  // Modal Open Handler
   const openModal = (evt = null) => {
     setFormError('');
     if (evt) {
@@ -224,7 +194,6 @@ export default function ScheduleView() {
     }
   };
 
-  // Drag & Drop Handlers on Timeline Grid (24 Hours)
   const handleDragStart = (evtId, e) => {
     setDraggedTaskId(evtId);
     e.dataTransfer.setData('text/plain', evtId);
@@ -246,12 +215,9 @@ export default function ScheduleView() {
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
 
-    // Row height = 60px
     const droppedRow = Math.max(1, Math.min(12, Math.floor(clickY / 60) + 1));
-
-    // Full 24 Hours math
     const hourOffset = (clickX / rect.width) * 24;
-    const droppedStartHour = Math.max(0, Math.min(23.5, Math.floor(hourOffset * 2) / 2)); // snap to 30 mins
+    const droppedStartHour = Math.max(0, Math.min(23.5, Math.floor(hourOffset * 2) / 2));
 
     const duration = evtObj.durationHours || 1.5;
     const newEndHour = Math.min(24, droppedStartHour + duration);
@@ -264,25 +230,14 @@ export default function ScheduleView() {
         endTime: hourToTimeString(newEndHour)
       });
     } catch (err) {
-      console.warn('Drag drop update error:', err);
+      console.warn('Drag drop error:', err);
     }
 
     setDraggedTaskId(null);
   };
 
-  // Format date display for header
-  const formatDateDisplay = (dateStr) => {
-    if (!dateStr) return '';
-    const d = new Date(dateStr + 'T00:00:00');
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const formatted = d.toLocaleDateString('vi-VN', options);
-    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-  };
-
   const pendingEvents = events.filter(e => e.status === 'Chờ duyệt');
   const activeEventsOnDate = events.filter(e => e.date === selectedDate);
-
-  // 24 Hours list
   const hoursList = Array.from({ length: 25 }, (_, i) => String(i).padStart(2, '0') + ':00');
 
   return (
@@ -340,7 +295,7 @@ export default function ScheduleView() {
         </div>
       </div>
 
-      {/* INTERACTIVE TIME AXIS SLIDER BAR (THANH TRƯỢT TRỤC THỜI GIAN 24H) */}
+      {/* TIME AXIS SLIDER BAR */}
       <div className="bg-surface-container-lowest rounded-3xl p-5 shadow-tactile border border-surface-variant space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -351,7 +306,6 @@ export default function ScheduleView() {
             </span>
           </div>
 
-          {/* Quick Jump Buttons */}
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => jumpToHour(0)}
@@ -386,7 +340,6 @@ export default function ScheduleView() {
           </div>
         </div>
 
-        {/* Range Slider Track */}
         <div className="flex items-center gap-3 pt-1">
           <span className="text-xs font-bold text-on-surface-variant font-mono">00:00</span>
           <input
@@ -451,7 +404,7 @@ export default function ScheduleView() {
         </div>
       )}
 
-      {/* SCHEDULE TRACK GRID CANVAS (FULL 24 HOURS WITH SMOOTH SLIDER) */}
+      {/* SCHEDULE TRACK GRID CANVAS */}
       <div className="bg-surface-container-lowest rounded-3xl border border-surface-variant shadow-tactile overflow-hidden relative">
         <div
           ref={gridScrollRef}
@@ -459,8 +412,6 @@ export default function ScheduleView() {
           className="overflow-x-auto"
           style={{ scrollbarWidth: 'thin', scrollbarColor: '#FFC0CB #f9ebe3' }}
         >
-          
-          {/* Time Header (Full 24 Hours: 00:00 to 24:00) */}
           <div className="flex border-b border-surface-variant bg-surface-container-lowest sticky top-0 z-20 min-w-[2400px]">
             <div className="w-16 flex-shrink-0 border-r border-surface-variant flex items-center justify-center font-bold text-xs text-on-surface-variant bg-surface-container-low sticky left-0 z-30">
               Hàng
@@ -474,10 +425,7 @@ export default function ScheduleView() {
             </div>
           </div>
 
-          {/* Grid Body */}
           <div className="flex min-h-[720px] min-w-[2400px] relative">
-            
-            {/* Row Numbers 1 to 12 (Fixed on left scroll) */}
             <div className="w-16 flex-shrink-0 border-r border-surface-variant bg-surface-container-lowest sticky left-0 z-20 font-bold shadow-xs">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(r => (
                 <div key={r} className="h-[60px] flex items-center justify-center text-xs text-on-surface-variant border-b border-surface-variant/40">
@@ -486,20 +434,17 @@ export default function ScheduleView() {
               ))}
             </div>
 
-            {/* Actual Track Grid Canvas */}
             <div
               className="flex-1 min-w-[2300px] relative bg-[#fff8f5]"
               onDragOver={handleGridDragOver}
               onDrop={handleGridDrop}
             >
-              {/* Background Horizontal Row Lines */}
               <div className="absolute inset-0 pointer-events-none">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(r => (
                   <div key={r} className="h-[60px] border-b border-surface-variant/40"></div>
                 ))}
               </div>
 
-              {/* REALTIME WALKING COW TRACKER (24 HOURS MATH) */}
               <div
                 className="absolute inset-y-0 w-0.5 bg-cow-spot z-20 pointer-events-none transition-all duration-700 ease-linear"
                 style={{ left: `${cowPercent}%` }}
@@ -509,7 +454,6 @@ export default function ScheduleView() {
                 className="absolute top-[2px] -ml-5 w-12 h-12 z-30 transition-all duration-700 ease-linear pointer-events-none"
                 style={{ left: `${cowPercent}%` }}
               >
-                {/* Speech Bubble */}
                 <div className="absolute -top-11 left-1/2 -translate-x-1/2 bg-white border-2 border-soft-pink rounded-full px-3 py-0.5 shadow-sm whitespace-nowrap z-40">
                   <span className="text-[10px] font-extrabold text-cow-spot">
                     {speechMsg}
@@ -517,7 +461,6 @@ export default function ScheduleView() {
                   <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white border-r-2 border-b-2 border-soft-pink rotate-45"></div>
                 </div>
 
-                {/* Walking Cow Image */}
                 <img
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBin37itLYhRkRc8USeXzO82Lku9k64dNP9TzFuRTuB64cKG0dCT4w03mU4zQp_PRApqIj_zk_Jv_AzGGmhkAb_qJXco53KhjSCz1Bw7L85QWBXxYCZgO1oL6z_45tlqnRzuQ9Fl3I7NmGwCvikeCQ4C4mHonVvtKPsyy4k5Smpke5kvkMi3L6eG12AV30cx5FiKS1rSUJ8P3harq4HPiNybpG2NZwJN8BjmRqTaA4PULmdaI-bOMUlz69sDNqRZO_TkA"
                   alt="Tracker Cow"
@@ -526,21 +469,18 @@ export default function ScheduleView() {
                 />
               </div>
 
-              {/* EVENT TRACK BLOCKS (24 HOURS POSITIONING) */}
               {activeEventsOnDate.map(evt => {
                 const row = evt.row || 1;
                 const startH = evt.startHour || timeStringToHour(evt.startTime) || 9;
                 const duration = evt.durationHours || 1.5;
 
-                // 24 Hours Position Math
                 const startOffsetPct = Math.max(0, Math.min(100, (startH / 24) * 100));
                 const widthPct = Math.max(2.5, Math.min(100 - startOffsetPct, (duration / 24) * 100));
-                const topPx = (row - 1) * 60 + 10; // 60px per row + 10px margin
+                const topPx = (row - 1) * 60 + 10;
 
                 const isOngoing = evt.status === 'Đang diễn ra';
                 const isCompleted = evt.status === 'Đã xong' || evt.completed;
 
-                // Color Theme Pill Classes
                 let bgPillClass = 'bg-cow-spot text-white';
                 let statusBadgeClass = 'bg-soft-pink text-cow-spot';
 
@@ -574,7 +514,6 @@ export default function ScheduleView() {
                   >
                     <span className="material-symbols-outlined text-[16px] opacity-70">drag_indicator</span>
                     
-                    {/* Complete checkbox button */}
                     <button
                       onClick={(e) => { e.stopPropagation(); toggleEventComplete(evt.id); }}
                       className="cursor-pointer"

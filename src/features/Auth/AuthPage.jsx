@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../store/AuthContext';
 
 export default function AuthPage() {
   const { login, register } = useAuth();
@@ -38,7 +38,6 @@ export default function AuthPage() {
     <div className="min-h-screen bg-background flex flex-col justify-center items-center p-4 cow-pattern">
       <div className="w-full max-w-md bg-surface-container-lowest rounded-3xl p-8 shadow-2xl border-2 border-cow-spot relative overflow-hidden">
         
-        {/* Brand Header */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-16 h-16 rounded-full bg-soft-pink flex items-center justify-center text-cow-spot shadow-tactile border-2 border-cow-spot mb-3 animate-bounce">
             <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>pets</span>
@@ -49,7 +48,6 @@ export default function AuthPage() {
           </p>
         </div>
 
-        {/* Tab Switcher */}
         <div className="flex bg-surface-container-high rounded-full p-1 mb-6 border border-surface-variant">
           <button
             type="button"
@@ -71,7 +69,6 @@ export default function AuthPage() {
           </button>
         </div>
 
-        {/* Alerts */}
         {error && (
           <div className="mb-4 p-3 bg-error-container text-on-error-container rounded-2xl text-xs font-bold flex items-center gap-2 border border-rose-300">
             <span className="material-symbols-outlined text-sm">error</span>
@@ -86,7 +83,6 @@ export default function AuthPage() {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
             <div>
@@ -172,7 +168,6 @@ export default function AuthPage() {
           </button>
         </form>
 
-        {/* Demo Quick Login Hint */}
         <div className="mt-8 pt-4 border-t border-surface-variant text-center">
           <p className="text-[11px] text-on-surface-variant font-bold mb-2 uppercase">Dùng thử nhanh tài khoản mẫu:</p>
           <div className="flex gap-2 justify-center">

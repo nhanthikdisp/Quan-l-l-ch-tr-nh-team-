@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useTrip } from '../context/TripContext';
+import { useAuth } from '../../store/AuthContext';
+import { useTrip } from '../../store/TripContext';
 
 export default function DashboardView({ setActiveTab }) {
   const { currentUser, isLead } = useAuth();
@@ -89,10 +89,8 @@ export default function DashboardView({ setActiveTab }) {
         )}
       </div>
 
-      {/* 2. TÓM TẮT NHANH CHUYẾN ĐỊ (STATS WIDGETS) */}
+      {/* 2. STATS WIDGETS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        {/* Card 1: Total Cost */}
         <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-pastel-green text-green-800 flex items-center justify-center font-bold text-2xl">
             <span className="material-symbols-outlined">payments</span>
@@ -106,7 +104,6 @@ export default function DashboardView({ setActiveTab }) {
           </div>
         </div>
 
-        {/* Card 2: Members Count */}
         <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-pastel-blue text-blue-800 flex items-center justify-center font-bold text-2xl">
             <span className="material-symbols-outlined">groups</span>
@@ -120,7 +117,6 @@ export default function DashboardView({ setActiveTab }) {
           </div>
         </div>
 
-        {/* Card 3: Events Count */}
         <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-pastel-yellow text-yellow-900 flex items-center justify-center font-bold text-2xl">
             <span className="material-symbols-outlined">event_available</span>
@@ -134,7 +130,6 @@ export default function DashboardView({ setActiveTab }) {
           </div>
         </div>
 
-        {/* Card 4: Pending Approval */}
         <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-tertiary-container text-tertiary flex items-center justify-center font-bold text-2xl">
             <span className="material-symbols-outlined">hourglass_top</span>
@@ -149,13 +144,10 @@ export default function DashboardView({ setActiveTab }) {
             </p>
           </div>
         </div>
-
       </div>
 
       {/* 3. QUICK UPCOMING EVENTS & APPROVAL BANNER */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left 2 Cols: Next Upcoming Events */}
         <div className="lg:col-span-2 bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-base font-extrabold text-cow-spot flex items-center gap-2">
@@ -202,7 +194,6 @@ export default function DashboardView({ setActiveTab }) {
           </div>
         </div>
 
-        {/* Right Col: Approval Status & Quick Actions */}
         <div className="bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant flex flex-col justify-between">
           <div>
             <h3 className="text-base font-extrabold text-cow-spot flex items-center gap-2 mb-3">
@@ -244,7 +235,6 @@ export default function DashboardView({ setActiveTab }) {
             </button>
           </div>
         </div>
-
       </div>
 
     </div>

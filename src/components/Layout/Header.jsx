@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useTrip } from '../context/TripContext';
+import { useAuth } from '../../store/AuthContext';
+import { useTrip } from '../../store/TripContext';
 
 export default function Header({ activeTab, setActiveTab }) {
-  const { currentUser, isLead, switchAccount, userList } = useAuth();
+  const { currentUser, switchAccount, userList } = useAuth();
   const { currentOngoingEvent } = useTrip();
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -27,7 +27,6 @@ export default function Header({ activeTab, setActiveTab }) {
     <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-surface-variant px-4 lg:px-8 py-4 mb-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
         
-        {/* Left: Page Title & Mobile Nav */}
         <div>
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-tertiary text-2xl">
@@ -64,10 +63,7 @@ export default function Header({ activeTab, setActiveTab }) {
           ))}
         </div>
 
-        {/* Right Controls: Realtime Clock, Switch Account, Role Indicator */}
         <div className="flex flex-wrap items-center gap-3">
-          
-          {/* Realtime Ongoing Event Alert Badge */}
           {currentOngoingEvent && (
             <div className="hidden xl:flex items-center gap-2 bg-pastel-purple text-purple-900 border border-purple-300 px-3 py-1.5 rounded-full text-xs font-bold animate-pulse">
               <span className="w-2.5 h-2.5 rounded-full bg-purple-600 animate-ping"></span>
@@ -76,7 +72,6 @@ export default function Header({ activeTab, setActiveTab }) {
             </div>
           )}
 
-          {/* Realtime Clock Badge */}
           <div className="flex items-center gap-2 bg-surface-container-low px-3.5 py-1.5 rounded-full border border-surface-variant text-xs font-semibold text-cow-spot">
             <span className="material-symbols-outlined text-tertiary text-base">schedule</span>
             <span>{formattedDate}</span>
@@ -85,7 +80,6 @@ export default function Header({ activeTab, setActiveTab }) {
             </span>
           </div>
 
-          {/* Quick Account Switcher (Helper for testing permissions Lead/Member) */}
           <div className="flex items-center gap-2 bg-surface-container-high px-3 py-1 rounded-full border border-surface-variant">
             <span className="text-[11px] font-bold text-on-surface-variant uppercase">Tài khoản:</span>
             <select

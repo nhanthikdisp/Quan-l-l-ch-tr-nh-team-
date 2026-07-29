@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useTrip } from '../context/TripContext';
+import { useAuth } from '../../store/AuthContext';
+import { useTrip } from '../../store/TripContext';
 
 export default function MembersView() {
   const { isLead } = useAuth();
@@ -37,30 +37,23 @@ export default function MembersView() {
     setError('');
 
     try {
-      if (!memberName.trim()) {
-        throw new Error('Vui lòng nhập tên thành viên!');
-      }
+      if (!memberName.trim()) throw new Error('Vui lòng nhập tên thành viên!');
 
       if (editingMember) {
         updateMemberRole(editingMember.id, appRole, skillRole);
       } else {
-        addMember({
-          name: memberName,
-          role: appRole,
-          skillRole
-        });
+        addMember({ name: memberName, role: appRole, skillRole });
       }
 
       setShowAddModal(false);
     } catch (err) {
-      setError(err.message || 'Thao tác không thành công!');
+      setError(err.message || 'Thao tác thất bại!');
     }
   };
 
   return (
     <div className="space-y-6">
 
-      {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface-container-lowest rounded-3xl p-6 shadow-tactile border border-surface-variant">
         <div>
           <h3 className="text-lg font-extrabold text-cow-spot">Danh Sách Thành Viên & Vai Trò</h3>
@@ -78,7 +71,6 @@ export default function MembersView() {
         )}
       </div>
 
-      {/* Permission Notice Banner */}
       {!isLead && (
         <div className="bg-surface-container-low rounded-2xl p-4 border border-surface-variant flex items-center gap-3 text-xs text-on-surface-variant">
           <span className="material-symbols-outlined text-tertiary">info</span>
@@ -86,7 +78,6 @@ export default function MembersView() {
         </div>
       )}
 
-      {/* Member Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {members.map(m => {
           const isMemberLead = m.role === 'Lead';
@@ -117,7 +108,6 @@ export default function MembersView() {
                 </div>
               </div>
 
-              {/* Action Buttons for Lead */}
               {isLead && (
                 <div className="pt-4 mt-4 border-t border-surface-variant flex justify-end gap-2">
                   <button
@@ -144,11 +134,9 @@ export default function MembersView() {
         })}
       </div>
 
-      {/* Modal Add/Edit Member */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cow-spot/50 backdrop-blur-xs">
           <div className="bg-surface-container-lowest rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-cow-spot">
-            
             <div className="flex justify-between items-center pb-4 mb-4 border-b border-surface-variant">
               <h3 className="text-base font-extrabold text-cow-spot flex items-center gap-2">
                 <span className="material-symbols-outlined text-tertiary">person_add</span>
@@ -227,7 +215,6 @@ export default function MembersView() {
                 </button>
               </div>
             </form>
-
           </div>
         </div>
       )}
